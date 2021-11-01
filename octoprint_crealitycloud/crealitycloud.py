@@ -11,7 +11,7 @@ from octoprint.events import Events
 from .config import CreailtyConfig
 from .crealityprinter import CrealityPrinter, ErrorCode
 from .perpetual_timer import PerpetualTimer
-
+from .websocketserver import Server
 
 class CrealityCloud(object):
     def __init__(self, plugin):
@@ -33,7 +33,8 @@ class CrealityCloud(object):
         self._iot_connected = False
         self.lk = None
         self.connect_aliyun()
-
+        self.server = None
+        
     @property
     def iot_connected(self):
         return self._iot_connected
@@ -77,7 +78,9 @@ class CrealityCloud(object):
             # self.lk.start_worker_loop()
             self._logger.info("aliyun loop")
             self._aliprinter = CrealityPrinter(self.plugin, self.lk)
-
+            self.server = Server(1, "Thread-1", 1)
+            self.server.start()
+            
     def region_to_string(self, num):
         regions = {
             0: "cn-shanghai",
